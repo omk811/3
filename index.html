@@ -29,11 +29,15 @@ h1{margin:0;font-size:clamp(30px,5vw,56px);color:#35246d;text-shadow:2px 2px 0 #
 .label:nth-child(7){transform:rotate(270deg)}
 .label:nth-child(8){transform:rotate(315deg)}
 .center{position:absolute;width:27%;height:27%;border-radius:50%;background:linear-gradient(135deg,#fff,#ffe8f0);border:8px solid #fff;display:grid;place-items:center;text-align:center;font-size:clamp(16px,2.4vw,27px);font-weight:1000;color:#35246d;box-shadow:0 8px 18px rgba(0,0,0,.26);z-index:3}
-.controls{text-align:center;margin-top:18px}
+.controls{text-align:center;margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 button{border:0;border-radius:22px;padding:16px 34px;font-family:inherit;font-size:clamp(21px,3vw,31px);font-weight:1000;color:#fff;background:linear-gradient(135deg,#ff2e63,#7b2cff);box-shadow:0 10px 0 #4b237c,0 15px 24px rgba(60,35,110,.3);cursor:pointer;transition:.2s}
 button:hover{transform:translateY(-2px);filter:brightness(1.08)}
 button:active{transform:translateY(6px);box-shadow:0 4px 0 #4b237c,0 8px 15px rgba(60,35,110,.24)}
 button:disabled{opacity:.62;cursor:not-allowed;transform:none}
+button.secondary{background:linear-gradient(135deg,#00bbf9,#1982c4);box-shadow:0 10px 0 #0d5a7a,0 15px 24px rgba(13,90,122,.3)}
+button.secondary:active{box-shadow:0 4px 0 #0d5a7a,0 8px 15px rgba(13,90,122,.24)}
+button.success{background:linear-gradient(135deg,#8ac926,#52a007);box-shadow:0 10px 0 #2d5a04,0 15px 24px rgba(45,90,4,.3)}
+button.success:active{box-shadow:0 4px 0 #2d5a04,0 8px 15px rgba(45,90,4,.24)}
 .panel{min-height:590px;display:flex;flex-direction:column;gap:16px}
 .badge{align-self:flex-start;background:#fff2a8;color:#7a4b00;border:3px solid #ffd64d;border-radius:999px;padding:8px 16px;font-size:22px;font-weight:1000}
 .result{background:linear-gradient(135deg,#ffffff,#f4fbff);border:4px dashed #7b2cff;border-radius:26px;padding:18px;min-height:190px}
@@ -42,8 +46,13 @@ button:disabled{opacity:.62;cursor:not-allowed;transform:none}
 .challenge{background:#eefcff;border:3px solid #00bbf9;border-radius:22px;padding:15px}
 .challenge-title{font-size:28px;color:#0877a8;font-weight:1000;margin-bottom:8px}
 .challenge-text{font-size:24px;font-weight:800;line-height:1.6}
+.answer-section{background:#fff8e1;border:3px solid #ffc107;border-radius:22px;padding:18px;margin-top:12px}
+.answer-title{font-size:26px;color:#f57c00;font-weight:1000;margin-bottom:12px;text-align:center}
 .examples{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.example{background:#fff;border:3px solid #ffc7dd;border-radius:18px;padding:12px;text-align:center;font-size:22px;font-weight:900;color:#522e8c}
+.example{background:#fff;border:3px solid #8ac926;border-radius:18px;padding:12px;text-align:center;font-size:22px;font-weight:900;color:#2d5a04}
+.hidden{display:none}
+.thinking{background:#fff3e0;border:3px solid #ff9800;border-radius:22px;padding:18px;text-align:center;font-size:26px;font-weight:900;color:#e65100;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 .scoreboard{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:auto}
 .score{background:linear-gradient(135deg,#fff,#fff6fb);border:3px solid #fff;border-radius:20px;padding:12px;text-align:center;box-shadow:0 8px 18px rgba(55,38,100,.12)}
 .score .num{font-size:36px;font-weight:1000;color:#ff2e63}
@@ -59,7 +68,7 @@ button:disabled{opacity:.62;cursor:not-allowed;transform:none}
 <body>
 <div class="container">
 <header>
-<h1>عجلة الحظ التعليمية</h1>
+<h1>🎯 عجلة الحظ التعليمية</h1>
 <div class="subtitle">مراجعة أقسام الكلام وأنواع الفعل للصف الخامس</div>
 </header>
 <main class="main">
@@ -79,24 +88,27 @@ button:disabled{opacity:.62;cursor:not-allowed;transform:none}
 <div class="center">أقسام<br>الكلام</div>
 </div>
 <div class="controls">
-<button id="spinBtn">تشغيل العجلة</button>
+<button id="spinBtn">🎲 تشغيل العجلة</button>
+<button id="showAnswerBtn" class="secondary hidden">✅ إظهار الإجابة</button>
+<button id="nextBtn" class="success hidden">➡️ جولة جديدة</button>
 </div>
 </section>
 <section id="panel" class="panel">
 <div class="badge">النشاط التفاعلي</div>
 <div class="result">
 <h2 id="title">جاهزة للدوران</h2>
-<p id="message">تظهر المهمة التعليمية بعد توقف العجلة على أحد الأقسام.</p>
+<p id="message">اضغط على زر "تشغيل العجلة" لبدء التحدي التعليمي.</p>
 </div>
-<div class="challenge">
-<div class="challenge-title">المهمة</div>
-<div id="challengeText" class="challenge-text">تصنيف الكلمات، تحديد نوع الفعل، أو تكوين جملة قصيرة بحسب القسم الناتج.</div>
+<div id="challengeSection" class="challenge hidden">
+<div class="challenge-title">⭐ التحدي</div>
+<div id="challengeText" class="challenge-text"></div>
 </div>
-<div class="examples" id="examples">
-<div class="example">مدرسة</div>
-<div class="example">كتبَ</div>
-<div class="example">إلى</div>
-<div class="example">اجلسْ</div>
+<div id="thinkingSection" class="thinking hidden">
+🤔 وقت التفكير... دع الطالب يجيب شفهياً!
+</div>
+<div id="answerSection" class="answer-section hidden">
+<div class="answer-title">✨ الإجابة الصحيحة</div>
+<div class="examples" id="examples"></div>
 </div>
 <div class="scoreboard">
 <div class="score"><div id="rounds" class="num">0</div><div class="txt">عدد الجولات</div></div>
@@ -105,31 +117,37 @@ button:disabled{opacity:.62;cursor:not-allowed;transform:none}
 </div>
 </section>
 </main>
-<div class="footer">قاعدة المراجعة: الكلمة إمّا اسم، أو فعل، أو حرف. والفعل من حيث الزمن: ماضٍ، مضارع، أمر.</div>
+<div class="footer">📚 قاعدة المراجعة: الكلمة إمّا اسم، أو فعل، أو حرف. والفعل من حيث الزمن: ماضٍ، مضارع، أمر.</div>
 </div>
 <script>
 const sections=[
-{name:"الاسم",message:"الاسم كلمة تدل على إنسان أو حيوان أو نبات أو جماد أو مكان أو صفة.",challenge:"التحدي: تحديد الأسماء في الجملة: ذهبَ خالدٌ إلى المدرسةِ مبكرًا.",examples:["خالد","المدرسة","قلم","جميل"]},
-{name:"الفعل الماضي",message:"الفعل الماضي يدل على حدث وقع وانتهى في الزمن الماضي.",challenge:"التحدي: استخراج الفعل الماضي، ثم تحويله إلى مضارع: كتبَ الطالبُ الدرسَ.",examples:["كتبَ","لعبَ","قرأَ","جلسَ"]},
-{name:"الفعل المضارع",message:"الفعل المضارع يدل على حدث يقع في الحاضر أو المستقبل، وغالبًا يبدأ بأحد أحرف: أ، ن، ي، ت.",challenge:"التحدي: تحديد الفعل المضارع في الجملة: يشرحُ المعلمُ الدرسَ بوضوح.",examples:["يكتبُ","نقرأُ","تلعبُ","أرسمُ"]},
-{name:"فعل الأمر",message:"فعل الأمر يدل على طلب حدوث الفعل.",challenge:"التحدي: تحويل الفعل المضارع إلى فعل أمر: يقرأُ، يكتبُ، يجلسُ.",examples:["اقرأْ","اكتبْ","اجلسْ","استمعْ"]},
-{name:"الحرف",message:"الحرف كلمة لا يظهر معناها كاملة إلا مع غيرها.",challenge:"التحدي: تحديد الحروف في الجملة: سافرَ الأبُ إلى المدينةِ في الصباحِ.",examples:["في","إلى","من","على"]},
-{name:"تمييز سريع",message:"تصنيف سريع للكلمات إلى: اسم، فعل، حرف.",challenge:"التحدي: تصنيف الكلمات الآتية: بيت، ذهبَ، من، يزرعُ، فوق، كتاب.",examples:["بيت: اسم","ذهبَ: فعل","من: حرف","يزرعُ: فعل"]},
-{name:"كوّن جملة",message:"مهمة تركيب جملة مفيدة تحتوي على قسم محدد من أقسام الكلام.",challenge:"التحدي: تكوين جملة مفيدة تحتوي على اسم وفعل وحرف.",examples:["قرأَ الطالبُ في المكتبةِ","ذهبَت سارةُ إلى الحديقةِ","يلعبُ الطفلُ بالكرةِ","اكتبْ في الدفترِ"]},
-{name:"بطاقة التحدي",message:"تحدٍّ شامل يجمع بين أقسام الكلام وأنواع الفعل.",challenge:"التحدي: في الجملة الآتية تحديد الاسم والفعل والحرف ونوع الفعل: يذهبُ سالمٌ إلى الملعبِ.",examples:["سالم: اسم","يذهبُ: مضارع","إلى: حرف","الملعب: اسم"]}
+{name:"الاسم",message:"الاسم كلمة تدل على إنسان أو حيوان أو نبات أو جماد أو مكان أو صفة.",challenge:"تحديد الأسماء في الجملة التالية:\n\n\"ذهبَ خالدٌ إلى المدرسةِ مبكرًا\"",examples:["خالد (اسم علم)","المدرسة (اسم مكان)","مبكرًا (اسم ظرف)"]},
+{name:"الفعل الماضي",message:"الفعل الماضي يدل على حدث وقع وانتهى في الزمن الماضي.",challenge:"استخراج الفعل الماضي من الجملة، ثم تحويله إلى مضارع:\n\n\"كتبَ الطالبُ الدرسَ\"",examples:["كتبَ (فعل ماضي)","يكتبُ (فعل مضارع)","أمثلة أخرى: لعبَ، قرأَ، جلسَ"]},
+{name:"الفعل المضارع",message:"الفعل المضارع يدل على حدث يقع في الحاضر أو المستقبل، ويبدأ بأحد أحرف: أ، ن، ي، ت.",challenge:"تحديد الفعل المضارع في الجملة:\n\n\"يشرحُ المعلمُ الدرسَ بوضوح\"",examples:["يشرحُ (فعل مضارع)","أمثلة أخرى:","يكتبُ، نقرأُ، تلعبُ، أرسمُ"]},
+{name:"فعل الأمر",message:"فعل الأمر يدل على طلب حدوث الفعل.",challenge:"تحويل الأفعال المضارعة التالية إلى أفعال أمر:\n\nيقرأُ - يكتبُ - يجلسُ",examples:["اقرأْ","اكتبْ","اجلسْ","استمعْ"]},
+{name:"الحرف",message:"الحرف كلمة لا يظهر معناها كاملاً إلا مع غيرها.",challenge:"تحديد جميع الحروف في الجملة:\n\n\"سافرَ الأبُ إلى المدينةِ في الصباحِ\"",examples:["إلى (حرف جر)","في (حرف جر)","أمثلة أخرى: من، على، عن"]},
+{name:"تمييز سريع",message:"تصنيف سريع للكلمات إلى: اسم، فعل، حرف.",challenge:"تصنيف الكلمات التالية:\n\nبيت - ذهبَ - من - يزرعُ - فوق - كتاب",examples:["بيت: اسم","ذهبَ: فعل ماضي","من: حرف","يزرعُ: فعل مضارع","فوق: حرف","كتاب: اسم"]},
+{name:"كوّن جملة",message:"مهمة تركيب جملة مفيدة تحتوي على قسم محدد من أقسام الكلام.",challenge:"تكوين جملة مفيدة تحتوي على:\n\nاسم + فعل + حرف",examples:["قرأَ الطالبُ في المكتبةِ","ذهبَت سارةُ إلى الحديقةِ","يلعبُ الطفلُ بالكرةِ","اكتبْ الواجبَ في الدفترِ"]},
+{name:"بطاقة التحدي",message:"تحدٍّ شامل يجمع بين أقسام الكلام وأنواع الفعل.",challenge:"في الجملة التالية، حدد:\n- الأسماء\n- الأفعال ونوعها\n- الحروف\n\n\"يذهبُ سالمٌ إلى الملعبِ\"",examples:["سالم: اسم علم","يذهبُ: فعل مضارع","إلى: حرف جر","الملعب: اسم مكان"]}
 ];
 const wheel=document.getElementById("wheel");
 const spinBtn=document.getElementById("spinBtn");
+const showAnswerBtn=document.getElementById("showAnswerBtn");
+const nextBtn=document.getElementById("nextBtn");
 const panel=document.getElementById("panel");
 const title=document.getElementById("title");
 const message=document.getElementById("message");
+const challengeSection=document.getElementById("challengeSection");
 const challengeText=document.getElementById("challengeText");
+const thinkingSection=document.getElementById("thinkingSection");
+const answerSection=document.getElementById("answerSection");
 const examples=document.getElementById("examples");
 const rounds=document.getElementById("rounds");
 const last=document.getElementById("last");
 const stars=document.getElementById("stars");
 let currentRotation=0;
 let roundCount=0;
+let currentIndex=-1;
 let audioCtx;
 function sound(type){
 try{
@@ -171,11 +189,30 @@ document.body.appendChild(s);
 setTimeout(()=>s.remove(),900);
 }
 }
-function updatePanel(index){
+function showQuestion(index){
 const item=sections[index];
-title.textContent=item.name;
+currentIndex=index;
+title.textContent="📌 "+item.name;
 message.textContent=item.message;
+challengeSection.classList.remove("hidden");
 challengeText.textContent=item.challenge;
+thinkingSection.classList.remove("hidden");
+answerSection.classList.add("hidden");
+showAnswerBtn.classList.remove("hidden");
+nextBtn.classList.add("hidden");
+roundCount++;
+rounds.textContent=roundCount;
+last.textContent=index+1;
+stars.textContent="★".repeat((roundCount%5)+1);
+panel.classList.remove("flash");
+void panel.offsetWidth;
+panel.classList.add("flash");
+sound("win");
+}
+function showAnswer(){
+const item=sections[currentIndex];
+thinkingSection.classList.add("hidden");
+answerSection.classList.remove("hidden");
 examples.innerHTML="";
 item.examples.forEach(ex=>{
 const div=document.createElement("div");
@@ -183,22 +220,21 @@ div.className="example";
 div.textContent=ex;
 examples.appendChild(div);
 });
-roundCount++;
-rounds.textContent=roundCount;
-last.textContent=index+1;
-stars.textContent="★".repeat((roundCount%3)+1);
-panel.classList.remove("flash");
-void panel.offsetWidth;
-panel.classList.add("flash");
-sound("win");
+showAnswerBtn.classList.add("hidden");
+nextBtn.classList.remove("hidden");
 sparkleBurst();
+sound("win");
 }
 function spin(){
 spinBtn.disabled=true;
+showAnswerBtn.classList.add("hidden");
+nextBtn.classList.add("hidden");
+challengeSection.classList.add("hidden");
+thinkingSection.classList.add("hidden");
+answerSection.classList.add("hidden");
 wheel.classList.add("spinning");
-title.textContent="العجلة تدور...";
-message.textContent="لحظات قليلة حتى تظهر المهمة.";
-challengeText.textContent="الاستعداد للتحدي القادم.";
+title.textContent="🎲 العجلة تدور...";
+message.textContent="لحظات قليلة حتى يظهر التحدي.";
 let ticks=0;
 const tick=setInterval(()=>{sound("spin");ticks++;if(ticks>18)clearInterval(tick)},170);
 const index=Math.floor(Math.random()*sections.length);
@@ -210,12 +246,17 @@ currentRotation+=target;
 wheel.style.transform=`rotate(${currentRotation}deg)`;
 setTimeout(()=>{
 wheel.classList.remove("spinning");
-updatePanel(index);
+showQuestion(index);
 spinBtn.disabled=false;
 },5000);
 }
 spinBtn.addEventListener("click",spin);
-document.addEventListener("keydown",e=>{if((e.key===" "||e.key==="Enter")&&!spinBtn.disabled)spin()});
+showAnswerBtn.addEventListener("click",showAnswer);
+nextBtn.addEventListener("click",spin);
+document.addEventListener("keydown",e=>{
+if(e.key===" "&&!spinBtn.disabled&&nextBtn.classList.contains("hidden"))spin();
+if(e.key==="Enter"&&!showAnswerBtn.classList.contains("hidden"))showAnswer();
+});
 </script>
 </body>
 </html>
